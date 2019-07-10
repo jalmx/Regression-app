@@ -11,3 +11,13 @@ Capturas de la app
 ![captura uno](imgs/img2.png)
 
 ![captura uno](imgs/img3.png)
+
+# Download & Run
+
+[Descargar](./dist/Regression.jar)
+
+Ejecución de app, se debe ejecutar un script en caso que la máquina virtual (JVM) no esté bien configurada.
+
+``` bash
+    java -jar Regression.jar
+```
