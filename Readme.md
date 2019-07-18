@@ -14,7 +14,7 @@ Capturas de la app
 
 # Download & Run
 
-[Descargar](./dist/Regression.jar)
+[Descargar](https://github.com/jalmx/Regression-app/raw/master/dist/Regression.jar)
 
 Ejecución de app, se debe ejecutar un script en caso que la máquina virtual (JVM) no esté bien configurada.
 

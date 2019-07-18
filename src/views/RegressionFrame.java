@@ -15,6 +15,8 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import lib.Pendiente;
 import lib.RegresionLineal;
 
 /**
@@ -51,6 +53,7 @@ public class RegressionFrame extends javax.swing.JFrame {
         jbRun = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jAreaOutput = new javax.swing.JTextArea();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -69,12 +72,10 @@ public class RegressionFrame extends javax.swing.JFrame {
         jTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null},
-                {null, null},
-                {null, null},
                 {null, null}
             },
             new String [] {
-                "Title 1", "Title 2"
+                "X", "Y"
             }
         ));
         jScrollPane1.setViewportView(jTable);
@@ -110,8 +111,25 @@ public class RegressionFrame extends javax.swing.JFrame {
         });
 
         jButton3.setText("Row -");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setText("Row +");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("Clear");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -121,8 +139,9 @@ public class RegressionFrame extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jbRun, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jbLoadFile, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jbLoadFile, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -136,13 +155,15 @@ public class RegressionFrame extends javax.swing.JFrame {
                 .addComponent(jButton3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton4)
-                .addContainerGap(277, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1)
+                .addContainerGap(242, Short.MAX_VALUE))
         );
 
         jAreaOutput.setEditable(false);
         jAreaOutput.setColumns(20);
         jAreaOutput.setFont(new java.awt.Font("Lucida Grande", 0, 15)); // NOI18N
-        jAreaOutput.setRows(5);
+        jAreaOutput.setRows(4);
         jScrollPane2.setViewportView(jAreaOutput);
 
         jMenu1.setText("File");
@@ -203,11 +224,55 @@ public class RegressionFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jbLoadFileActionPerformed
 
     private void jbRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbRunActionPerformed
-        readTable();
+        DefaultTableModel model = (DefaultTableModel) jTable.getModel();
+
+        try {
+            if (model.getRowCount() <= 2) {
+                calculatePendiente();
+            } else {
+                readTable();
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Faltan datos o hay error en ellos");
+        }
+
+
     }//GEN-LAST:event_jbRunActionPerformed
 
+    private void calculatePendiente() {
+        Pendiente.Point init = new Pendiente.Point(
+                Double.parseDouble((String) jTable.getValueAt(0, 0)),
+                Double.parseDouble((String) jTable.getValueAt(0, 1))
+        );
+        Pendiente.Point finish = new Pendiente.Point(
+                Double.parseDouble((String) jTable.getValueAt(1, 0)),
+                Double.parseDouble((String) jTable.getValueAt(1, 1))
+        );
+
+        jAreaOutput.setText(Pendiente.getInstacePendiente(init, finish).getEcuation());
+        Pendiente.clear();
+    }
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        DefaultTableModel model = (DefaultTableModel) jTable.getModel();
+        model.addRow(new Object[]{"", ""});
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        DefaultTableModel model = (DefaultTableModel) jTable.getModel();
+        if (model.getRowCount() != 0) {
+            model.removeRow(model.getRowCount() - 1);
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        jTable.setModel(new DefaultTableModel(new Object[]{"X", "Y"}, 2));
+        tx = null;
+        ty = null;
+        jAreaOutput.setText("");
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     private void readTable() {
-        int nColumn = jTable.getColumnCount();
         int nRow = jTable.getRowCount();
         tx = new ArrayList<>();
         ty = new ArrayList<>();
@@ -306,6 +371,7 @@ public class RegressionFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea jAreaOutput;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
